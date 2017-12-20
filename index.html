@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .swiper {
+        width: 600px;
+        height: 400px;
+        margin: 100px auto;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+    }
+
+
+    .swiper ul {
+        width: 8000px;
+        height: 100%;
+        font-size: 0px;
+        position: absolute;
+        left: -600px;
+    }
+
+    .swiper ul li {
+        width: 600px;
+        display: inline-block;
+    }
+
+    .swiper ul li a {
+        width: 600px;
+    }
+
+    .swiper ul img {
+        width: 600px;
+        height: 400px;
+    }
+
+    /* 小按钮 */
+
+    .swiper .swiperCtrlCon {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -87px;
+    }
+
+    .swiper .swiperCtrlCon i {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        margin: 0px 3px;
+        display: inline-block;
+    }
+
+    .current {
+        background-color: rgb(252, 166, 7);
+    }
+
+    /* 左右 按钮 */
+
+    .swiper .swiperCtrl span {
+        display: none;
+        width: 40px;
+        height: 40px;
+        background: rgba(0, 0, 0, 0.3);
+        position: absolute;
+        top: 50%;
+        margin-top: -20px;
+        text-align: center;
+    }
+
+    .swiper:hover .swiperCtrl span {
+        display: block;
+    }
+
+    .swiper .swiperCtrl .swiperCtrlPrev {
+        left: 20px;
+    }
+
+    .swiper .swiperCtrl .swiperCtrlNext {
+        right: 20px;
+    }
+
+    .swiper .swiperCtrl span img {
+        height: 40px;
+    }
+</style>
+
+<body>
+    <div class="swiper" id="box">
+        <ul id="ul">
+            <li>
+                <a href="">
+                    <img src="images/5.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <img src="images/0.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <img src="images/1.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <img src="images/2.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <img src="images/3.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <img src="images/4.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <img src="images/5.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <img src="images/0.jpg" alt="">
+                </a>
+            </li>
+        </ul>
+        <div class="swiperCtrlCon">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
+        <div class="swiperCtrl">
+            <span class="swiperCtrlPrev">
+                <img src="images/left.png" alt="">
+            </span>
+            <span class="swiperCtrlNext">
+                <img src="images/right.png" alt="">
+            </span>
+        </div>
+    </div>
+
+    <script>
+        var box = document.getElementById("box");
+        var ul = document.getElementById("ul");
+        var lis = ul.children;
+        var btns = document.getElementsByClassName("swiperCtrlCon")[0].children;
+        var btnPrev = document.getElementsByClassName("swiperCtrlPrev")[0];
+        var btnNext = document.getElementsByClassName("swiperCtrlNext")[0];
+
+        var currentIndex = 1;
+        btns[0].className = "current";
+        var flag = true;
+        // 事件 事件处理函数
+        // swiperCtrlCon 小圆点控制按钮
+        for (var i = 0, len = btns.length; i < len; i++) {
+            btns[i].index = i + 1;
+            btns[i].onclick = function () {
+                if(!flag){return};
+                for (var j = 0; j < len; j++) {
+                    btns[j].className = "";
+                }
+                this.className = "current";
+                currentIndex = this.index;
+                animate(ul, "left", -currentIndex * 600);
+            }
+        }
+
+        //  左右控制按钮
+        btnNext.onclick = function () {
+            if(!flag){return};
+            currentIndex++;      
+            var n = currentIndex * -600;
+            // swiperCtrlCon();
+            animate(ul, "left", n);
+        }
+        btnPrev.onclick = function () {
+            if(!flag){return};
+            currentIndex--;
+            var n = currentIndex * -600;
+            // swiperCtrlCon();
+            animate(ul, "left", n);
+        }
+
+        // 封装动画
+        function animate(obj, attr, target) {
+            clearInterval(obj.timer);
+            flag = false;
+            if(currentIndex > 6){
+                    currentIndex = 1
+                }else if(currentIndex < 1){
+                    currentIndex = 6;
+                }
+            obj.timer = setInterval(function () {
+                // 图片部分
+                var current = parseInt(getStyle(obj, attr));
+                // console.log("获取到的style里的属性值" + current);
+                var speed = (target - current) / 10;
+                speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                obj.style[attr] = current + speed + "px";
+
+                if (current == target) {
+                    clearInterval(obj.timer);
+                    flag = true;
+                    console.log("target:" + target + "|||" + "current" + current)
+                }
+               
+                if (current <= -4200) {
+                    // currentIndex = 1;
+                    obj.style[attr] = -600 + "px";
+                    clearInterval(obj.timer);
+                } else if (current >= 0) {
+                    // currentIndex = 6;
+                    obj.style[attr] = -3600 + "px";
+                    clearInterval(obj.timer);
+                }
+            }, 30)
+
+            // 圆点部分
+            console.log("currentIndex:" + currentIndex);
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].className = "";
+                btns[currentIndex - 1].className = "current";
+            }
+        }
+
+        // autoplay自动播放
+        function autoplay() {
+            timer = setInterval(function(){
+                btnNext.onclick();
+            },3500)
+        }
+        autoplay();
+        //获取 style 属性值
+        function getStyle(obj, attr) {
+            if (obj.currentStyle) {
+                return obj.currentStyle[attr];
+            } else {
+                return window.getComputedStyle(obj, null)[attr];
+            }
+        }
+        // 鼠标移动到大盒子上,停止滚动,离开则基础轮播
+        box.onmouseover = function(){
+            clearInterval(timer);
+        }
+        box.onmouseout = function(){
+            autoplay();
+        }
+
+
+    </script>
+</body>
+
+</html>
